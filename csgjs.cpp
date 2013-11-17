@@ -41,10 +41,10 @@ struct Node
 inline static Vector operator + (const Vector & a, const Vector & b) { return Vector(a.x + b.x, a.y + b.y, a.z + b.z); }
 inline static Vector operator - (const Vector & a, const Vector & b) { return Vector(a.x - b.x, a.y - b.y, a.z - b.z); }
 inline static Vector operator * (const Vector & a, double b) { return Vector(a.x * b, a.y * b, a.z * b); }
-inline static Vector operator / (const Vector & a, double b) { return a * (1.0f / b); }
+inline static Vector operator / (const Vector & a, double b) { return a * (1.0 / b); }
 inline static double dot(const Vector & a, const Vector & b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
 inline static Vector lerp(const Vector & a, const Vector & b, double v) { return a + (b - a) * v; }
-inline static Vector negate(const Vector & a) { return a * -1.0f; }
+inline static Vector negate(const Vector & a) { return a * -1.0; }
 inline static double length(const Vector & a) { return sqrt(dot(a, a)); }
 inline static Vector unit(const Vector & a) { return a / length(a); }
 inline static Vector cross(const Vector & a, const Vector & b) { return Vector(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x); }
@@ -63,19 +63,19 @@ inline static Vertex interpolate(const Vertex & a, const Vertex & b, double t)
 
 // Plane implementation
 
-Plane::Plane() : normal(), w(0.0f) 
+Plane::Plane() : normal(), w(0.0) 
 {
 }
 
 bool Plane::ok() const 
 {
-	return length(this->normal) > 0.0f; 
+	return length(this->normal) > 0.0; 
 }
 
 void Plane::flip()
 {
 	this->normal = negate(this->normal); 
-	this->w *= -1.0f;
+	this->w *= -1.0;
 }
 
 Plane::Plane(const Vector & a, const Vector & b, const Vector & c)
