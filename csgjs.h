@@ -36,11 +36,41 @@ struct Vertex
 	Vector pos;
 };
 
+struct Polygon;
+
+// Represents a plane in 3D space.
+struct Plane
+{
+	Vector normal;
+	double w;
+
+	Plane();
+	Plane(const Vector & a, const Vector & b, const Vector & c);
+	bool ok() const;
+	void flip();
+	void split_polygon(const Polygon & polygon, std::vector<Polygon> & coplanar_front, std::vector<Polygon> & coplanar_back, std::vector<Polygon> & front, std::vector<Polygon> & back) const;
+};
+
+// Represents a convex polygon. The vertices used to initialize a polygon must
+// be coplanar and form a convex loop. 
+struct Polygon
+{
+	std::vector<Vertex> vertices;
+	Plane plane;
+	void flip();
+
+	Polygon();
+	Polygon(const std::vector<Vertex> & list);
+};
+
 struct Model
 {
 	std::vector<Vertex> vertices;
 	std::vector<int> indices;
 };
+
+Model model_from_polygons(const std::vector<Polygon> & polygons);
+std::vector<Polygon> model_to_polygons(const Model & model);
 
 // public interface - not super efficient, if you use multiple CSG operations you should
 // use BSP trees and convert them into model only once. Another optimization trick is

@@ -12,33 +12,6 @@ namespace csgjs
 // point is on the plane.
 static const double EPSILON = 0.00001;
 
-struct Polygon;
-
-// Represents a plane in 3D space.
-struct Plane
-{
-	Vector normal;
-	double w;
-
-	Plane();
-	Plane(const Vector & a, const Vector & b, const Vector & c);
-	bool ok() const;
-	void flip();
-	void split_polygon(const Polygon & polygon, std::vector<Polygon> & coplanarFront, std::vector<Polygon> & coplanarBack, std::vector<Polygon> & front, std::vector<Polygon> & back) const;
-};
-
-// Represents a convex polygon. The vertices used to initialize a polygon must
-// be coplanar and form a convex loop. 
-struct Polygon
-{
-	std::vector<Vertex> vertices;
-	Plane plane;
-	void flip();
-
-	Polygon();
-	Polygon(const std::vector<Vertex> & list);
-};
-
 // Holds a node in a BSP tree. A BSP tree is built from a collection of polygons
 // by picking a polygon to split along. That polygon (and all other coplanar
 // polygons) are added directly to that node and the other polygons are added to
@@ -113,10 +86,10 @@ Plane::Plane(const Vector & a, const Vector & b, const Vector & c)
 
 // Split `polygon` by this plane if needed, then put the polygon or polygon
 // fragments in the appropriate lists. Coplanar polygons go into either
-// `coplanarFront` or `coplanarBack` depending on their orientation with
+// `coplanar_front` or `coplanar_back` depending on their orientation with
 // respect to this plane. Polygons in front or in back of this plane go into
 // either `front` or `back`.
-void Plane::split_polygon(const Polygon & polygon, std::vector<Polygon> & coplanarFront, std::vector<Polygon> & coplanarBack, std::vector<Polygon> & front, std::vector<Polygon> & back) const
+void Plane::split_polygon(const Polygon & polygon, std::vector<Polygon> & coplanar_front, std::vector<Polygon> & coplanar_back, std::vector<Polygon> & front, std::vector<Polygon> & back) const
 {
 	enum
 	{
@@ -145,9 +118,9 @@ void Plane::split_polygon(const Polygon & polygon, std::vector<Polygon> & coplan
 	case COPLANAR:
 		{
 			if (dot(this->normal, polygon.plane.normal) > 0)
-				coplanarFront.push_back(polygon);
+				coplanar_front.push_back(polygon);
 			else 
-				coplanarBack.push_back(polygon);
+				coplanar_back.push_back(polygon);
 			break;
 		}
 	case FRONT:
@@ -362,7 +335,7 @@ Node::~Node()
 
 // Public interface implementation
 
-inline static std::vector<Polygon> model_to_polygons(const Model & model)
+std::vector<Polygon> model_to_polygons(const Model & model)
 {
 	std::vector<Polygon> list;
 	for (size_t i = 0; i < model.indices.size(); i+= 3)
@@ -378,7 +351,7 @@ inline static std::vector<Polygon> model_to_polygons(const Model & model)
 	return list;
 }
 
-inline static Model model_from_polygons(const std::vector<Polygon> & polygons)
+Model model_from_polygons(const std::vector<Polygon> & polygons)
 {
 	Model model;
 	int p = 0;
